@@ -16,7 +16,7 @@ class Warehouse extends CI_Controller {
         }
         
         // Proteksi Role
-        $role = $this->session->userdata('role');
+        $role = strtolower(trim($this->session->userdata('role')));
         if (!in_array($role, ['warehouse', 'admin'])) {
             redirect('login/home');
         }

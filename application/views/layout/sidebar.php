@@ -86,7 +86,8 @@
              <p>Home</p>
            </a>
          </li>
-         <?php if ($this->session->userdata('role') == "admin") { ?>
+         <?php $role = strtolower(trim($this->session->userdata('role'))); ?>
+         <?php if ($role == "admin") { ?>
            <li class="nav-item">
              <a href="<?php echo base_url(); ?>index.php/login/users" class="nav-link">
                <!-- <i class="fas fa-home nav-icon"></i> --><i data-lucide="settings"></i>
@@ -94,7 +95,7 @@
              </a>
            </li>
          <?php } ?>
-         <?php if ($this->session->userdata('role') == "admin" || $this->session->userdata('role') == "cs" || $this->session->userdata('role') == "whcs") { ?>
+         <?php if ($role == "admin" || $role == "cs" || $role == "whcs") { ?>
            <li class="nav-item">
              <a href="<?php echo base_url(); ?>index.php/cs/cs_upload_frm" class="nav-link">
                <i data-lucide="file-up"></i>
@@ -114,7 +115,7 @@
              </a>
            </li>
          <?php } ?>
-         <?php if ($this->session->userdata('role') == "admin" || $this->session->userdata('role') == "security") { ?>
+         <?php if ($role == "admin" || $role == "security") { ?>
            <li class="nav-item">
              <a href="<?php echo base_url(); ?>index.php/security" class="nav-link">
                <!-- <i class="fas fas fa-truck nav-icon"></i> --><i data-lucide="shield"></i>
@@ -122,7 +123,7 @@
              </a>
            </li>
          <?php } ?>
-         <?php if ($this->session->userdata('role') == "admin" || $this->session->userdata('role') == "warehouse" || $this->session->userdata('role') == "whcs") { ?>
+         <?php if ($role == "admin" || $role == "warehouse" || $role == "whcs") { ?>
            <li class="nav-item">
              <a href="<?php echo base_url(); ?>index.php/warehouse" class="nav-link">
                <!-- <i class="fas fa-warehouse nav-icon"></i> --><i data-lucide="warehouse"></i>

@@ -16,7 +16,7 @@ class Security extends CI_Controller {
 		}
 
 		// Proteksi Role
-		$role = $this->session->userdata('role');
+		$role = strtolower(trim($this->session->userdata('role')));
 		if (!in_array($role, ['security', 'admin'])) {
 			redirect('login/home');
 		}
