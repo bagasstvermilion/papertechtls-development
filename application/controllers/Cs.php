@@ -18,7 +18,7 @@ class Cs extends CI_Controller
 
 		// ═══ TAMBAHAN: Proteksi berdasarkan role ═══
 		$role = strtolower(trim($this->session->userdata('role')));
-		if (!in_array($role, ['admin', 'cs', 'warehouse'])) {
+		if (!in_array($role, ['admin', 'cs', 'warehouse', 'whcs'])) {
 			redirect('login/home');
 		}
 		// ═══════════════════════════════════════════
