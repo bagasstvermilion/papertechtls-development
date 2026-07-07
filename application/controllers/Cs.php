@@ -51,8 +51,8 @@ class Cs extends CI_Controller
 		$data = [];
 		$i = 0;
 
-		$sql = "SELECT * from cs_history where tanggal_jadwal='$param1' and SUBSTRING_INDEX(kedatangan_truck, '.', 1)='$param2' and length(item_desc)>0";
-		$rs = $this->db->query($sql);
+		$sql = "SELECT * from cs_history where tanggal_jadwal=? and SUBSTRING_INDEX(kedatangan_truck, '.', 1)=? and length(item_desc)>0";
+		$rs = $this->db->query($sql, [$param1, $param2]);
 		if ($rs->num_rows() > 0) {
 			foreach ($rs->result_array() as $row) {
 
@@ -95,11 +95,11 @@ class Cs extends CI_Controller
 		}
 
 		$sql = "WITH cs_historys AS (
-		SELECT csh.tanggal_jadwal, csh.kode_unik, csh.kedatangan_truck, csh.normal_min as normal_min_netto, csh.warning as netto_lebih_dari_berat_ini from cs_history csh where csh.kedatangan_truck not like '%.%' and csh.kedatangan_truck not like '%,%' and length(csh.kedatangan_truck)>0 and csh.kedatangan_truck<>'TOTAL' and length(csh.item_desc)<1 
-		and csh.tanggal_jadwal between '$param1' and '$param2'
+		SELECT csh.tanggal_jadwal, csh.kode_unik, csh.kedatangan_truck, csh.normal_min as normal_min_netto, csh.warning as netto_lebih_dari_berat_ini from cs_history csh where csh.kedatangan_truck not like '%.%' and csh.kedatangan_truck not like '%,%' and length(csh.kedatangan_truck)>0 and csh.kedatangan_truck<>'TOTAL' and length(csh.item_desc)<1
+		and csh.tanggal_jadwal between ? and ?
 		)
 		SELECT cshs.*, tl.* from truck_logs tl, cs_historys cshs where tl.tanggal=cshs.tanggal_jadwal and tl.no_antrean=cshs.kedatangan_truck order by cshs.kedatangan_truck";
-		$rs = $this->db->query($sql);
+		$rs = $this->db->query($sql, [$param1, $param2]);
 		if ($rs->num_rows() > 0) {
 			foreach ($rs->result_array() as $row) {
 
@@ -144,20 +144,20 @@ class Cs extends CI_Controller
 				$row["trans_no"] = '<a title="Detail No Pol ' . $row["no_polisi"] . '" href="javascript:addForm(\'' . $row["trans_no"] . '_' . $row["no_polisi"] . '_' . $row["tanggal_jadwal"] . '_' . $row["no_antrean"] . '\');">' . $row["trans_no"] . '</a>';
 
 				//loop komen wh
-				$sql1 = "SELECT *, left(right(created_at,8),5) as jamkomen from remark_logs where trans_no='" . $row["trans_no1"] . "' and role='warehouse' order by created_at asc";
-				$rs1 = $this->db->query($sql1);
+				$sql1 = "SELECT *, left(right(created_at,8),5) as jamkomen from remark_logs where trans_no=? and role='warehouse' order by created_at asc";
+				$rs1 = $this->db->query($sql1, [$row["trans_no1"]]);
 				if ($rs1->num_rows() > 0) {
 					foreach ($rs1->result_array() as $row1) {
-						$row["remarks_wh"] = $row["remarks_wh"] . "<div style=\"border-bottom: 1px solid #ccc;\" class=\"row\" title=\"" . $row1["created_by"] . "\">" .  $row1["jamkomen"] . ": " . $row1["remarks"] . "</div>";
+						$row["remarks_wh"] = $row["remarks_wh"] . "<div style=\"border-bottom: 1px solid #ccc;\" class=\"row\" title=\"" . htmlspecialchars($row1["created_by"], ENT_QUOTES, 'UTF-8') . "\">" .  $row1["jamkomen"] . ": " . htmlspecialchars($row1["remarks"], ENT_QUOTES, 'UTF-8') . "</div>";
 					}
 				}
 
 				//loop komen security
-				$sql2 = "SELECT *, left(right(created_at,8),5) as jamkomen from remark_logs where trans_no='" . $row["trans_no1"] . "' and role='security' order by created_at asc";
-				$rs2 = $this->db->query($sql2);
+				$sql2 = "SELECT *, left(right(created_at,8),5) as jamkomen from remark_logs where trans_no=? and role='security' order by created_at asc";
+				$rs2 = $this->db->query($sql2, [$row["trans_no1"]]);
 				if ($rs2->num_rows() > 0) {
 					foreach ($rs2->result_array() as $row2) {
-						$row["keterangan_sec"] = $row["keterangan_sec"] . "<div style=\"border-bottom: 1px solid #ccc;\"class=\"row\" title=\"" . $row2["created_by"] . "\">" .  $row2["jamkomen"] . ": " . $row2["remarks"] . "</div>";
+						$row["keterangan_sec"] = $row["keterangan_sec"] . "<div style=\"border-bottom: 1px solid #ccc;\"class=\"row\" title=\"" . htmlspecialchars($row2["created_by"], ENT_QUOTES, 'UTF-8') . "\">" .  $row2["jamkomen"] . ": " . htmlspecialchars($row2["remarks"], ENT_QUOTES, 'UTF-8') . "</div>";
 					}
 				}
 
@@ -196,8 +196,8 @@ class Cs extends CI_Controller
 			$created_by = "";
 		}
 
-		$sql = "SELECT * from cs_upload_log where date(upload_at) between '$param1' and '$param2' order by upload_at";
-		$rs = $this->db->query($sql);
+		$sql = "SELECT * from cs_upload_log where date(upload_at) between ? and ? order by upload_at";
+		$rs = $this->db->query($sql, [$param1, $param2]);
 		if ($rs->num_rows() > 0) {
 			foreach ($rs->result_array() as $row) {
 
@@ -328,10 +328,10 @@ class Cs extends CI_Controller
 			//exit();
 
 			//kalau ada data hapus dulu replace dengan yang baru
-			$this->db->query("DELETE from cs_upload_log where plandate='$tanggal_jadwal'");
-			$this->db->query("DELETE from cs_history where tanggal_jadwal='$tanggal_jadwal'");
+			$this->db->query("DELETE from cs_upload_log where plandate=?", [$tanggal_jadwal]);
+			$this->db->query("DELETE from cs_history where tanggal_jadwal=?", [$tanggal_jadwal]);
 
-			$this->db->query("INSERT into cs_upload_log(filename, upload_by, plandate) values('$filename', '$username', '$tanggal_jadwal')");
+			$this->db->query("INSERT into cs_upload_log(filename, upload_by, plandate) values(?, ?, ?)", [$filename, $username, $tanggal_jadwal]);
 
 			//$this->db->insert_batch('machining_shipping_plan', $data); //ini sudah OKE
 
@@ -393,7 +393,7 @@ class Cs extends CI_Controller
 					//$no_so = $sheetData[$i]['4'];
 					//$mid = $sheetData[$i]['5'];
 
-					$item_desc = addslashes($sheetData[$i]['4']);
+					$item_desc = $sheetData[$i]['4'];
 					$weight = $sheetData[$i]['5'];
 					$color = $sheetData[$i]['6'];
 					$pattern_nose = $sheetData[$i]['7'];
@@ -421,8 +421,10 @@ class Cs extends CI_Controller
 
 					//array_push($data, $datas); //untuk insert batch ini sudah OKE
 
-					$sql = "INSERT INTO cs_history(iduploadlog, tanggal_jadwal, kode_unik, kedatangan_truck, nama_customer, area, urutan_bongkar, item_desc, weight, color, pattern_nose, qty_box_pallet, qty_pcs, qty_box_pallet_total, status_produk, waktu_muat, status_tracking, berat_total, berat_box, berat_isi_truck, normal_min, normal_max, toleransi_min, toleransi_max, warning) values($iduploadlog, '$tanggal_jadwal', '$kode_unik', '$kedatangan_truck', '$nama_customer', '$area', '$urutan_bongkar', '$item_desc', '$weight', '$color', '$pattern_nose', $qty_box_pallet, $qty_pcs, $qty_box_pallet_total, '$status_produk', '$waktu_muat', '$status_tracking', $berat_total, $berat_box, $berat_isi_truck, $normal_min, $normal_max, $toleransi_min, $toleransi_max, $warning)";
-					$this->db->query($sql);
+					$sql = "INSERT INTO cs_history(iduploadlog, tanggal_jadwal, kode_unik, kedatangan_truck, nama_customer, area, urutan_bongkar, item_desc, weight, color, pattern_nose, qty_box_pallet, qty_pcs, qty_box_pallet_total, status_produk, waktu_muat, status_tracking, berat_total, berat_box, berat_isi_truck, normal_min, normal_max, toleransi_min, toleransi_max, warning) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					$this->db->query($sql, [
+						$iduploadlog, $tanggal_jadwal, $kode_unik, $kedatangan_truck, $nama_customer, $area, $urutan_bongkar, $item_desc, $weight, $color, $pattern_nose, $qty_box_pallet, $qty_pcs, $qty_box_pallet_total, $status_produk, $waktu_muat, $status_tracking, $berat_total, $berat_box, $berat_isi_truck, $normal_min, $normal_max, $toleransi_min, $toleransi_max, $warning
+					]);
 
 					$afftectedRows = $afftectedRows + $this->db->affected_rows();
 				}
