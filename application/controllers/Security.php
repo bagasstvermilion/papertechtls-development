@@ -193,7 +193,7 @@ class Security extends CI_Controller {
 		$this->db->where('tanggal', $hari_ini);
 		$cek_tiket = $this->db->get('truck_logs')->row_array();
 		if ($cek_tiket) {
-			$this->session->set_flashdata('danger', "⚠️ Gagal! No Ticket '$trans_no' sudah pernah digunakan sebelumnya.");
+			$this->session->set_flashdata('danger', "⚠️ Gagal! No Ticket '" . htmlspecialchars($trans_no, ENT_QUOTES, 'UTF-8') . "' sudah pernah digunakan sebelumnya.");
 			redirect('security');
 		}
 
