@@ -393,7 +393,7 @@ class Cs extends CI_Controller
 					//$no_so = $sheetData[$i]['4'];
 					//$mid = $sheetData[$i]['5'];
 
-					$item_desc = $sheetData[$i]['4'];
+					$item_desc = (string) $sheetData[$i]['4'];
 					$weight = $sheetData[$i]['5'];
 					$color = $sheetData[$i]['6'];
 					$pattern_nose = $sheetData[$i]['7'];
@@ -425,6 +425,7 @@ class Cs extends CI_Controller
 					$this->db->query($sql, [
 						$iduploadlog, $tanggal_jadwal, $kode_unik, $kedatangan_truck, $nama_customer, $area, $urutan_bongkar, $item_desc, $weight, $color, $pattern_nose, $qty_box_pallet, $qty_pcs, $qty_box_pallet_total, $status_produk, $waktu_muat, $status_tracking, $berat_total, $berat_box, $berat_isi_truck, $normal_min, $normal_max, $toleransi_min, $toleransi_max, $warning
 					]);
+
 
 					$afftectedRows = $afftectedRows + $this->db->affected_rows();
 				}
